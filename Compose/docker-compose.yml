@@ -1,0 +1,26 @@
+services:
+  proxy:
+    build: ./proxy
+    ports:
+      - "8080:80"
+    networks:
+      - network_balance
+
+  site1:
+    build: ./site1
+    networks:
+      - network_balance
+
+  site2:
+    build: ./site2
+    networks:
+      - network_balance
+
+  site3:
+    build: ./site3
+    networks:
+      - network_balance
+
+networks:
+  network_balance:
+    driver: bridge

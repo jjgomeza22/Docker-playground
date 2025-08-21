@@ -1,0 +1,47 @@
+version: '3.8'                          # Versión de docker-compose
+
+services:
+
+  web:                                  # Nombre del servicio
+    image: nginx:latest                 # Imagen de docker
+    ports:
+      - "80:80"                         # Puerto de la máquina host y puerto del contenedor
+    volumes:
+      - ./web:/usr/share/nginx/html     # Volumen de la máquina host y volumen del contenedor
+    environment:                        # Variables de entorno
+      - NGINX_HOST=example.com
+      - NGINX_PORT=80
+  proxy:                                # Nombre del servicio
+    build: ./Proxy                      # Ruta del Dockerfile
+    ports:
+      - "8080:80"
+    networks:                           # Redes
+      - red_balance
+    depends_on:                         # Dependencias
+      - site1
+      - site2
+      - site3
+
+  site1:
+    build: ./site1
+    networks:
+      - red_balance
+
+  site2:
+    build: ./site2
+    networks:
+      - red_balance
+    volumes:                            # Volúmenes para persistencia de datos
+      - db_data:/var/lib/postgresql/data
+
+  site3:
+    build: ./site3
+    networks:
+      - red_balance
+
+networks:                               # Redes
+  red_balance:                          # Nombre de la red
+    driver: bridge                      # Tipo de red
+
+volumes:                                # Volúmenes
+  db_data:                              # Nombre del volumen
